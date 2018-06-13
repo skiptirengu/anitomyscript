@@ -1,0 +1,3 @@
+[submodule "anitomy"]
+	path = anitomy
+	url = https://github.com/erengy/anitomy
