@@ -1,0 +1,28 @@
+{
+  "name": "anitomyscript",
+  "version": "1.0.0",
+  "description": "Pure JavaScript bindings for Anitomy, ported with emscripten",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/skiptirengu/anitomyscript.git"
+  },
+  "keywords": [
+    "anitomy",
+    "script",
+    "javascript",
+    "anime"
+  ],
+  "author": "Thiago Oliveira <thiago_ogt@outlook.com>",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/skiptirengu/anitomyscript/issues"
+  },
+  "homepage": "https://github.com/skiptirengu/anitomyscript#readme",
+  "devDependencies": {
+    "gulp": "^4.0.0"
+  }
+}
