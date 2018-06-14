@@ -7,48 +7,31 @@ using namespace emscripten;
 using namespace anitomy;
 using namespace std;
 
-class AnitomyBinding
+vector<string_t> *vectorFromIntPointer(uintptr_t vec)
 {
-  private:
-    Anitomy _anitomy;
-
-  public:
-    AnitomyBinding() {}
-
-    void _setOptions(Options newOptions)
-    {
-        Options options = _anitomy.options();
-        options.allowed_delimiters = newOptions.allowed_delimiters;
-        options.ignored_strings = newOptions.ignored_strings;
-        options.parse_episode_number = newOptions.parse_episode_number;
-        options.parse_episode_title = newOptions.parse_episode_title;
-        options.parse_file_extension = newOptions.parse_file_extension;
-        options.parse_release_group = newOptions.parse_release_group;
-    }
-
-    bool _getOption()
-    {
-        return _anitomy.options().parse_episode_number;
-    }
-};
-
-extern "C"
-{
-    vector<string_t> *vectorFromIntPointer(uintptr_t vec)
-    {
-        return reinterpret_cast<vector<string_t> *>(vec);
-    }
+    return reinterpret_cast<vector<string_t> *>(vec);
 }
 
 EMSCRIPTEN_BINDINGS(Anitomy)
 {
-    class_<AnitomyBinding>("AnitomyBinding")
-        .constructor<>()
-        .function("_setOptions", &AnitomyBinding::_setOptions)
-        .function("_getOption", &AnitomyBinding::_getOption);
-
-    register_vector<string_t>("StringVector")
+    register_vector<string_t>("VectorString_t")
         .constructor(&vectorFromIntPointer, allow_raw_pointers());
+
+    class_<Anitomy>("Anitomy")
+        .constructor<>()
+        .function("parse", &Anitomy::Parse)
+        .function("elements", &Anitomy::elements)
+        .function("options", &Anitomy::options)
+        .function("tokens", &Anitomy::tokens);
+
+    class_<Elements>("Elements")
+        .constructor<>()
+        .function("size", &Elements::size)
+        .function("empty_capacity", select_overload<bool() const>(&Elements::empty))
+        .function("empty_lookup", select_overload<bool(ElementCategory) const>(&Elements::empty))
+        .function("get", &Elements::get)
+        .function("count", &Elements::count)
+        .function("get_all", &Elements::get_all);
 
     value_object<Options>("Options")
         .field("allowed_delimiters", &Options::allowed_delimiters)
@@ -57,4 +40,34 @@ EMSCRIPTEN_BINDINGS(Anitomy)
         .field("parse_episode_title", &Options::parse_episode_title)
         .field("parse_file_extension", &Options::parse_file_extension)
         .field("parse_release_group", &Options::parse_release_group);
+
+    enum_<ElementCategory>("ElementCategory")
+        .value("kElementIterateFirst", ElementCategory::kElementIterateFirst)
+        .value("kElementAnimeSeason", ElementCategory::kElementAnimeSeason)
+        .value("kElementAnimeSeasonPrefix", ElementCategory::kElementAnimeSeasonPrefix)
+        .value("kElementAnimeTitle", ElementCategory::kElementAnimeTitle)
+        .value("kElementAnimeType", ElementCategory::kElementAnimeType)
+        .value("kElementAnimeYear", ElementCategory::kElementAnimeYear)
+        .value("kElementAudioTerm", ElementCategory::kElementAudioTerm)
+        .value("kElementDeviceCompatibility", ElementCategory::kElementDeviceCompatibility)
+        .value("kElementEpisodeNumber", ElementCategory::kElementEpisodeNumber)
+        .value("kElementEpisodeNumberAlt", ElementCategory::kElementEpisodeNumberAlt)
+        .value("kElementEpisodePrefix", ElementCategory::kElementEpisodePrefix)
+        .value("kElementEpisodeTitle", ElementCategory::kElementEpisodeTitle)
+        .value("kElementFileChecksum", ElementCategory::kElementFileChecksum)
+        .value("kElementFileExtension", ElementCategory::kElementFileExtension)
+        .value("kElementFileName", ElementCategory::kElementFileName)
+        .value("kElementLanguage", ElementCategory::kElementLanguage)
+        .value("kElementOther", ElementCategory::kElementOther)
+        .value("kElementReleaseGroup", ElementCategory::kElementReleaseGroup)
+        .value("kElementReleaseInformation", ElementCategory::kElementReleaseInformation)
+        .value("kElementReleaseVersion", ElementCategory::kElementReleaseVersion)
+        .value("kElementSource", ElementCategory::kElementSource)
+        .value("kElementSubtitles", ElementCategory::kElementSubtitles)
+        .value("kElementVideoResolution", ElementCategory::kElementVideoResolution)
+        .value("kElementVideoTerm", ElementCategory::kElementVideoTerm)
+        .value("kElementVolumeNumber", ElementCategory::kElementVolumeNumber)
+        .value("kElementVolumePrefix", ElementCategory::kElementVolumePrefix)
+        .value("kElementIterateLast", ElementCategory::kElementIterateLast)
+        .value("kElementUnknown", ElementCategory::kElementUnknown);
 }
