@@ -59,14 +59,19 @@ function newArrayFromStringVector(vector) {
   return mapVector(vector, (val) => val);
 }
 
+function validateInput(value) {
+  if (typeof value !== 'string' || !value) {
+    throw new Error('value should be a non empty string');
+  }
+}
+
 function newStringVector(array, validate) {
   const vec = new anitomy_native.VectorString_t();
   for (let value of array) {
-    if (validate && typeof value !== 'string') {
-      throw new Error('value should be a string');
-    } else {
-      vec.push_back(value);
+    if (validate) {
+      validateInput(value);
     }
+    vec.push_back(value);
   }
   return vec;
 }
@@ -93,14 +98,20 @@ function parse(file, options, cb) {
       parsed = anitomy_native._parseArray(newStringVector(file, true), options);
       parsed = newArrayFromElementVector(parsed);
     } else {
+      validateInput(file);
       parsed = anitomy_native._parseFile(file, options);
       parsed = createObjectFromElements(parsed);
     }
 
     resolve(parsed);
-
+  }).then((parsed) => {
+    if (cb) cb(undefined, parsed);
+    return parsed;
+  }).catch((err) => {
     if (cb) {
-      cb(parsed);
+      cb(err)
+    } else {
+      throw err;
     }
   });
 }

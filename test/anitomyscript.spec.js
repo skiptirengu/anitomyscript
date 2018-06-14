@@ -32,7 +32,7 @@ describe('anitomyscript', function () {
     });
   });
 
-  describe('Anitomy JS', function () {
+  describe('Anitomy binding', function () {
     it(`parse - single file (${fixtureKeys.length} test cases)`, function () {
       const deferreds = fixtureKeys.map((key) => {
         logger.log(key);
@@ -101,6 +101,41 @@ describe('anitomyscript', function () {
           expect(res.unknown).to.deep.eq(fixture.unknown);
         });
       });
+    });
+    it('parse - callback', function (done) {
+      anitomyscript.parse('[Infantjedi] Norn9 - Norn + Nonetto - 12', null, function (err, data) {
+        expect(err).to.be.undefined;
+        expect(data.anime_title).to.be.eq('Norn9 - Norn + Nonetto');
+        expect(data.episode_number).to.be.eq('12');
+        expect(data.file_name).to.be.eq('[Infantjedi] Norn9 - Norn + Nonetto - 12');
+        expect(data.release_group).to.be.eq('Infantjedi');
+        done();
+      });
+    });
+    it('parse - invalid input array', function () {
+      return new Promise((resolve, reject) => {
+        anitomyscript.parse(['[Infantjedi] Norn9 - Norn + Nonetto - 12', ''])
+          .then(() => {
+            reject('should throw');
+          })
+          .catch((err) => {
+            expect(err.message).to.be.eq('value should be a non empty string');
+            resolve();
+          });
+      });
+    });
+    it('parse - invalid values', function () {
+      const deferreds = [null, '', 0].map((v) => {
+        return new Promise((resolve, reject) => {
+          anitomyscript.parse(v)
+            .then(() => reject('should throw'))
+            .catch((err) => {
+              expect(err.message).to.be.eq('value should be a non empty string');
+              resolve();
+            });
+        });
+      });
+      return Promise.all(deferreds);
     });
   });
 });
