@@ -64,6 +64,7 @@ function generate(cb) {
     '--bind',
     '--llvm-lto', '3',
     '--memory-init-file', '0',
+    '-s', 'EXPORT_NAME="Anitomy"',
     '-s', 'NO_FILESYSTEM=1',
     '-s', 'WASM=0',
     '-o', out,
