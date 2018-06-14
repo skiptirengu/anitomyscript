@@ -21,8 +21,6 @@ else (UNIX)
     endif (MSVC)
 endif (UNIX)
 
-include_directories(/Users/newm/Code/Personal/emsdk/emscripten/1.38.5/system/include)
-
 set(BINDING_SOURCE_FILES
         src/anitomy_script.cpp)
 
