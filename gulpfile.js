@@ -62,6 +62,7 @@ function generate(cb) {
   const spawnArgs = [
     '-O3',
     '--bind',
+    '--closure', '1',
     '--llvm-lto', '3',
     '--memory-init-file', '0',
     '-s', 'EXPORT_NAME="Anitomy"',
