@@ -7,6 +7,21 @@ using namespace emscripten;
 using namespace anitomy;
 using namespace std;
 
+class AnitomyCompat : public Anitomy
+{
+  public:
+    void setOptions(Options newOptions)
+    {
+        Options &opts = options();
+        opts.allowed_delimiters = newOptions.allowed_delimiters;
+        opts.ignored_strings = newOptions.ignored_strings;
+        opts.parse_episode_number = newOptions.parse_episode_number;
+        opts.parse_episode_title = newOptions.parse_episode_title;
+        opts.parse_file_extension = newOptions.parse_file_extension;
+        opts.parse_release_group = newOptions.parse_release_group;
+    }
+};
+
 vector<string_t> *vectorFromIntPointer(uintptr_t vec)
 {
     return reinterpret_cast<vector<string_t> *>(vec);
@@ -17,12 +32,16 @@ EMSCRIPTEN_BINDINGS(Anitomy)
     register_vector<string_t>("VectorString_t")
         .constructor(&vectorFromIntPointer, allow_raw_pointers());
 
-    class_<Anitomy>("Anitomy")
+    class_<Anitomy>("AnitomyRaw")
         .constructor<>()
         .function("parse", &Anitomy::Parse)
         .function("elements", &Anitomy::elements)
         .function("options", &Anitomy::options)
         .function("tokens", &Anitomy::tokens);
+
+    class_<AnitomyCompat, base<Anitomy>>("Anitomy")
+        .constructor<>()
+        .function("setOptions", &AnitomyCompat::setOptions);
 
     class_<Elements>("Elements")
         .constructor<>()
