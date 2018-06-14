@@ -22,15 +22,53 @@ class AnitomyCompat : public Anitomy
     }
 };
 
-vector<string_t> *vectorFromIntPointer(uintptr_t vec)
+vector<string_t> *string_tVectorFromIntPointer(uintptr_t vec)
 {
     return reinterpret_cast<vector<string_t> *>(vec);
 }
 
+vector<Elements> *elementVectorFromIntPointer(uintptr_t vec)
+{
+    return reinterpret_cast<vector<Elements> *>(vec);
+}
+
+Options createOptions()
+{
+    return Options();
+}
+
+vector<Elements> parseArray(vector<string_t> vec, Options options)
+{
+    vector<Elements> ret;
+    AnitomyCompat an;
+    an.setOptions(options);
+    for (string_t filename : vec)
+    {
+        an.Parse(filename);
+        ret.emplace_back(an.elements());
+    }
+    return ret;
+}
+
+Elements parseFile(string_t filename, Options options)
+{
+    AnitomyCompat an;
+    an.setOptions(options);
+    an.Parse(filename);
+    return an.elements();
+}
+
 EMSCRIPTEN_BINDINGS(Anitomy)
 {
+    emscripten::function("_parseArray", &parseArray);
+    emscripten::function("_parseFile", &parseFile);
+    emscripten::function("_createOptions", &createOptions);
+
     register_vector<string_t>("VectorString_t")
-        .constructor(&vectorFromIntPointer, allow_raw_pointers());
+        .constructor(&string_tVectorFromIntPointer, allow_raw_pointers());
+
+    register_vector<Elements>("VectorElements")
+        .constructor(&elementVectorFromIntPointer, allow_raw_pointers());
 
     class_<Anitomy>("AnitomyRaw")
         .constructor<>()
