@@ -64,7 +64,6 @@ function generate(cb) {
     '--bind',
     '--llvm-lto', '3',
     '--memory-init-file', '0',
-    '-s', 'ALLOW_MEMORY_GROWTH=1',
     '-s', 'NO_FILESYSTEM=1',
     '-s', 'WASM=0',
     '-o', out,
@@ -108,4 +107,5 @@ gulp.task('clear-js', clearJS);
 gulp.task('clear-build', clearBuild);
 gulp.task('generate', gulp.series(clearJS, generate));
 gulp.task('build', gulp.series(configure, make));
-gulp.task('default', gulp.series(configure, make, generate));
+gulp.task('rebuild', gulp.series(clearBuild, configure, make, clearJS, generate));
+gulp.task('default', gulp.series(configure, make, clearJS, generate));
