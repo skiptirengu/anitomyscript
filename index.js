@@ -2,44 +2,61 @@
 
 const anitomy_native = require('./build/anitomy-build');
 
-function createObjectFromElements(elements) {
-  // "anime_season", elements, anitomy:: kElementAnimeSeason
-  // "season_prefix", elements, anitomy:: kElementAnimeSeasonPrefix
-  // "anime_title", elements, anitomy:: kElementAnimeTitle
-  // "anime_type", elements, anitomy:: kElementAnimeType
-  // "anime_year", elements, anitomy:: kElementAnimeYear
-  // "audio_term", elements, anitomy:: kElementAudioTerm
-  // "device_compatibility", elements, anitomy:: kElementDeviceCompatibility
-  // "episode_number", elements, anitomy:: kElementEpisodeNumber
-  // "episode_number_alt", elements, anitomy:: kElementEpisodeNumberAlt
-  // "episode_prefix", elements, anitomy:: kElementEpisodePrefix
-  // "episode_title", elements, anitomy:: kElementEpisodeTitle
-  // "file_checksum", elements, anitomy:: kElementFileChecksum
-  // "file_extension", elements, anitomy:: kElementFileExtension
-  // "file_name", elements, anitomy:: kElementFileName
-  // "language", elements, anitomy:: kElementLanguage
-  // "other", elements, anitomy:: kElementOther
-  // "release_group", elements, anitomy:: kElementReleaseGroup
-  // "release_information", elements, anitomy:: kElementReleaseInformation
-  // "release_version", elements, anitomy:: kElementReleaseVersion
-  // "source", elements, anitomy:: kElementSource
-  // "subtitles", elements, anitomy:: kElementSubtitles
-  // "video_resolution", elements, anitomy:: kElementVideoResolution
-  // "video_term", elements, anitomy:: kElementVideoTerm
-  // "volume_number", elements, anitomy:: kElementVolumeNumber
-  // "volume_prefix", elements, anitomy:: kElementVolumePrefix
-  // "unknown", elements, anitomy:: kElementUnknown
-  return {};
+function elementEntry(elements, key) {
+  if (elements.count(key) > 1) {
+    return newArrayFromStringVector(elements.get_all(key));
+  } else {
+    const val = elements.get(key)
+    return val == '' ? undefined : val;
+  }
 }
 
-function newArrayFromElementVector(vector) {
+function createObjectFromElements(elements) {
+  return {
+    anime_season: elementEntry(elements, anitomy_native.ElementCategory.kElementAnimeSeason),
+    season_prefix: elementEntry(elements, anitomy_native.ElementCategory.kElementAnimeSeasonPrefix),
+    anime_title: elementEntry(elements, anitomy_native.ElementCategory.kElementAnimeTitle),
+    anime_type: elementEntry(elements, anitomy_native.ElementCategory.kElementAnimeType),
+    anime_year: elementEntry(elements, anitomy_native.ElementCategory.kElementAnimeYear),
+    audio_term: elementEntry(elements, anitomy_native.ElementCategory.kElementAudioTerm),
+    device_compatibility: elementEntry(elements, anitomy_native.ElementCategory.kElementDeviceCompatibility),
+    episode_number: elementEntry(elements, anitomy_native.ElementCategory.kElementEpisodeNumber),
+    episode_prefix: elementEntry(elements, anitomy_native.ElementCategory.kElementEpisodePrefix),
+    episode_title: elementEntry(elements, anitomy_native.ElementCategory.kElementEpisodeTitle),
+    file_checksum: elementEntry(elements, anitomy_native.ElementCategory.kElementFileChecksum),
+    file_extension: elementEntry(elements, anitomy_native.ElementCategory.kElementFileExtension),
+    file_name: elementEntry(elements, anitomy_native.ElementCategory.kElementFileName),
+    language: elementEntry(elements, anitomy_native.ElementCategory.kElementLanguage),
+    other: elementEntry(elements, anitomy_native.ElementCategory.kElementOther),
+    release_group: elementEntry(elements, anitomy_native.ElementCategory.kElementReleaseGroup),
+    release_information: elementEntry(elements, anitomy_native.ElementCategory.kElementReleaseInformation),
+    release_version: elementEntry(elements, anitomy_native.ElementCategory.kElementReleaseVersion),
+    source: elementEntry(elements, anitomy_native.ElementCategory.kElementSource),
+    subtitles: elementEntry(elements, anitomy_native.ElementCategory.kElementSubtitles),
+    video_resolution: elementEntry(elements, anitomy_native.ElementCategory.kElementVideoResolution),
+    video_term: elementEntry(elements, anitomy_native.ElementCategory.kElementVideoTerm),
+    volume_number: elementEntry(elements, anitomy_native.ElementCategory.kElementVolumeNumber),
+    volume_prefix: elementEntry(elements, anitomy_native.ElementCategory.kElementVolumePrefix),
+    unknown: elementEntry(elements, anitomy_native.ElementCategory.kElementUnknown),
+  };
+}
+
+function mapVector(vector, cb) {
   const array = [];
   for (let i = 0; i < vector.size(); i++) {
     array.push(
-      createObjectFromElements(vector.get(i))
+      cb(vector.get(i))
     );
   }
   return array;
+}
+
+function newArrayFromElementVector(vector) {
+  return mapVector(vector, (val) => createObjectFromElements(val));
+}
+
+function newArrayFromStringVector(vector) {
+  return mapVector(vector, (val) => val);
 }
 
 function newStringVector(array, validate) {
@@ -74,11 +91,12 @@ function parse(file, options, cb) {
 
     if (Array.isArray(file)) {
       parsed = anitomy_native._parseArray(newStringVector(file, true), options);
+      parsed = newArrayFromElementVector(parsed);
     } else {
       parsed = anitomy_native._parseFile(file, options);
+      parsed = createObjectFromElements(parsed);
     }
 
-    parsed = newArrayFromElementVector(parsed);
     resolve(parsed);
 
     if (cb) {
