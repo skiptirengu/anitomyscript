@@ -88,5 +88,6 @@ function parse(file, options, cb) {
 }
 
 module.exports = {
-  parse
+  parse: parse,
+  AnitomyNative: anitomy_native
 };
