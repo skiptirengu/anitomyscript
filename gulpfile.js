@@ -25,7 +25,8 @@ function configure(cb) {
     console.log(`error: ${data}`);
   });
 
-  s.on('close', () => cb());
+  s.on('error', (e) => cb(e))
+  s.on('close', (c) => cb());
 }
 
 function make(cb) {
@@ -47,7 +48,8 @@ function make(cb) {
     console.log(`error: ${data}`);
   });
 
-  s.on('close', () => cb());
+  s.on('error', (e) => cb(e))
+  s.on('close', (c) => cb());
 }
 
 function generate(cb) {
@@ -82,7 +84,8 @@ function generate(cb) {
     console.log(`error: ${data}`);
   });
 
-  s.on('close', () => cb());
+  s.on('error', (e) => cb(e))
+  s.on('close', (c) => cb());
 }
 
 function clearJS(cb) {
