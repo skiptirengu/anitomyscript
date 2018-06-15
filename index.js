@@ -78,42 +78,42 @@ function newStringVector(array, validate) {
 
 function newAnitomyOptions(options) {
   const anitomyOpts = anitomy_native._createOptions();
-  anitomyOpts.allowed_delimiters = typeof options.allowed_delimiters === 'string' ? options.allowed_delimiters : anitomyOpts.allowed_delimiters;
-  anitomyOpts.ignored_strings = Array.isArray(options.ignored_strings) ? newStringVector(options.ignored_strings, true) : anitomyOpts.ignored_strings;
-  anitomyOpts.parse_episode_number = options.parse_episode_number !== undefined ? !!options.parse_episode_number : anitomyOpts.parse_episode_number;
-  anitomyOpts.parse_episode_title = options.parse_episode_title !== undefined ? !!options.parse_episode_title : anitomyOpts.parse_episode_title;
-  anitomyOpts.parse_file_extension = options.parse_file_extension !== undefined ? !!options.parse_file_extension : anitomyOpts.parse_file_extension;
-  anitomyOpts.parse_release_group = options.parse_release_group !== undefined ? !!options.parse_release_group : anitomyOpts.parse_release_group;
+  if (typeof options.allowed_delimiters === 'string') {
+    anitomyOpts.allowed_delimiters = options.allowed_delimiters;
+  }
+  if (Array.isArray(options.ignored_strings)) {
+    anitomyOpts.ignored_strings = newStringVector(options.ignored_strings, true);
+  }
+  if (options.parse_episode_number !== undefined) {
+    anitomyOpts.parse_episode_number = !!options.parse_episode_number;
+  }
+  if (options.parse_episode_title !== undefined) {
+    anitomyOpts.parse_episode_title = !!options.parse_episode_title;
+  }
+  if (options.parse_file_extension !== undefined) {
+    anitomyOpts.parse_file_extension = !!options.parse_file_extension;
+  }
+  if (options.parse_release_group !== undefined) {
+    anitomyOpts.parse_release_group = !!options.parse_release_group;
+  }
   return anitomyOpts;
 }
 
-function parse(file, options, cb) {
-  return new Promise((resolve) => {
-    let param = file;
-    let parsed;
+function parse(file, options) {
+  let parsed;
 
-    options = newAnitomyOptions(options || {});
+  options = newAnitomyOptions(options || {});
 
-    if (Array.isArray(file)) {
-      parsed = anitomy_native._parseArray(newStringVector(file, true), options);
-      parsed = newArrayFromElementVector(parsed);
-    } else {
-      validateInput(file);
-      parsed = anitomy_native._parseFile(file, options);
-      parsed = createObjectFromElements(parsed);
-    }
+  if (Array.isArray(file)) {
+    parsed = anitomy_native._parseArray(newStringVector(file, true), options);
+    parsed = newArrayFromElementVector(parsed);
+  } else {
+    validateInput(file);
+    parsed = anitomy_native._parseFile(file, options);
+    parsed = createObjectFromElements(parsed);
+  }
 
-    resolve(parsed);
-  }).then((parsed) => {
-    if (cb) cb(undefined, parsed);
-    return parsed;
-  }).catch((err) => {
-    if (cb) {
-      cb(err)
-    } else {
-      throw err;
-    }
-  });
+  return parsed;
 }
 
 module.exports = {
