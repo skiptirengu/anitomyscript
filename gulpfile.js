@@ -5,6 +5,8 @@ const spawn = require('child_process').spawn;
 const path = require('path');
 const fs = require('fs');
 const fse = require('fs-extra');
+const browserify = require('browserify');
+const babelify = require('babelify');
 
 function configure(cb) {
   const emscriptenPath = process.env.EMSCRIPTEN;
@@ -14,7 +16,9 @@ function configure(cb) {
   }
 
   const s = spawn(
-    path.join(emscriptenPath, 'emconfigure'), ['cmake', path.resolve('.')], { cwd: path.resolve('./', 'build.project') }
+    path.join(emscriptenPath, 'emconfigure'), ['cmake', path.resolve('.')], {
+      cwd: path.resolve('./', 'build.project')
+    }
   );
 
   s.stdout.on('data', (data) => {
@@ -37,7 +41,9 @@ function make(cb) {
   }
 
   const s = spawn(
-    path.join(emscriptenPath, 'emmake'), ['make'], { cwd: path.resolve('.', 'build.project') }
+    path.join(emscriptenPath, 'emmake'), ['make'], {
+      cwd: path.resolve('.', 'build.project')
+    }
   );
 
   s.stdout.on('data', (data) => {
@@ -75,7 +81,9 @@ function generate(cb) {
     'anitomyscript.bc'
   ]
 
-  const s = spawn(path.join(emscriptenPath, 'emcc'), spawnArgs, { cwd: dir });
+  const s = spawn(path.join(emscriptenPath, 'emcc'), spawnArgs, {
+    cwd: dir
+  });
 
   s.stdout.on('data', (data) => {
     console.log(data.toString());
@@ -107,11 +115,41 @@ function clearBuild(cb) {
   cb();
 }
 
+function browser() {
+  return browserify('./index.js', {
+      standalone: 'anitomyscript'
+    })
+    .transform('babelify', {
+      presets: ['babel-preset-env'],
+      only: "index.js"
+    })
+    .bundle()
+    .pipe(fs.createWriteStream('./dist/bundle.js'));
+}
+
+function browserMin() {
+  return browserify('./index.js', {
+      standalone: 'anitomyscript'
+    })
+    .transform('uglifyify', {
+      global: true
+    })
+    .transform('babelify', {
+      presets: ['babel-preset-env'],
+      only: 'index.js'
+    })
+    .bundle()
+    .pipe(fs.createWriteStream('./dist/bundle.min.js'));
+}
+
+gulp.task('browser', browser);
+gulp.task('browser-min', browserMin);
+gulp.task('build-browser', gulp.parallel(browser, browserMin));
 gulp.task('configure', configure);
 gulp.task('make', make);
 gulp.task('clear-js', clearJS);
 gulp.task('clear-build', clearBuild);
 gulp.task('generate', gulp.series(clearJS, generate));
-gulp.task('build', gulp.series(configure, make));
-gulp.task('rebuild', gulp.series(clearBuild, configure, make, clearJS, generate));
-gulp.task('default', gulp.series(configure, make, clearJS, generate));
+gulp.task('build', gulp.series(configure, make, generate));
+gulp.task('rebuild', gulp.series(clearBuild, configure, make, clearJS, generate, gulp.parallel(browser, browserMin)));
+gulp.task('default', gulp.series(configure, make, clearJS, generate, gulp.parallel(browser, browserMin)));
