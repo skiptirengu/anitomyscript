@@ -10,10 +10,11 @@ const fixtureKeys = Object.keys(fixtures);
 describe('anitomyscript', function () {
   describe('AnitomyNative', function () {
     it('Anitomy.setOptions', function () {
-      const defaultOptions = anitomyscript.AnitomyNative._createOptions();
-      const anitomy = new anitomyscript.AnitomyNative.Anitomy();
-      const newOpts = anitomyscript.AnitomyNative._createOptions();
-      const ignored = new anitomyscript.AnitomyNative.VectorString_t();
+      const anitomy_native = new anitomyscript.AnitomyNative();
+      const defaultOptions = anitomy_native._createOptions();
+      const anitomy = new anitomy_native.Anitomy();
+      const newOpts = anitomy_native._createOptions();
+      const ignored = new anitomy_native.VectorString_t();
       ignored.push_back('test321');
       newOpts.ignored_strings = ignored;
       newOpts.allowed_delimiters = 'test123';

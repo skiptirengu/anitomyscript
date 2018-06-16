@@ -1,6 +1,7 @@
 'use strict';
 
-const anitomy_native = require('./build/anitomy-build');
+const AnitomyNative = require('./build/anitomy-build');
+const anitomy_native = new AnitomyNative();
 
 function elementEntry(elements, key) {
   if (elements.count(key) > 1) {
@@ -118,5 +119,5 @@ function parse(file, options) {
 
 module.exports = {
   parse: parse,
-  AnitomyNative: anitomy_native
+  AnitomyNative: AnitomyNative
 };

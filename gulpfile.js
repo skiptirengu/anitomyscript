@@ -67,9 +67,10 @@ function generate(cb) {
     '--closure', '1',
     '--llvm-lto', '3',
     '--memory-init-file', '0',
-    '-s', 'EXPORT_NAME="Anitomy"',
+    '-s', 'EXPORT_NAME="anitomyscript"',
     '-s', 'NO_FILESYSTEM=1',
     '-s', 'WASM=0',
+    '-s', 'MODULARIZE=1',
     '-o', out,
     'anitomyscript.bc'
   ]
