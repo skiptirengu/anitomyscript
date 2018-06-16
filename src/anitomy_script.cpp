@@ -1,6 +1,5 @@
 #include <emscripten/bind.h>
 #include <vector>
-#include <string>
 #include "../anitomy/anitomy/anitomy.h"
 
 using namespace emscripten;
