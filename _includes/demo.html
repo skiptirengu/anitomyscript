@@ -1,0 +1,26 @@
+<script src="https://cdn.rawgit.com/skiptirengu/anitomyscript/master/dist/bundle.min.js" async></script>
+<input type="text" id="demo-input" name="demo-input" style="width: 91%">
+<button id="demo-parse">Parse!</button>
+<pre id="demo-preview">
+// preview
+</pre>
+<script>
+  (function () {
+    var input = document.getElementById("demo-input");
+    var button = document.getElementById("demo-parse");
+    var preview = document.getElementById("demo-preview");
+    input.onkeypress = function (e) {
+      if (e.keyCode == 13) {
+        button.click();
+      }
+    };
+    button.onclick = function () {
+      try {
+        var parsed = window.anitomyscript.parse(input.value);
+        preview.innerText = JSON.stringify(parsed, null, 2);
+      } catch (err) {
+        preview.innerText = err.message;
+      }
+    };
+  })();
+</script>
