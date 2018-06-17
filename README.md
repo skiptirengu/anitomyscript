@@ -3,6 +3,9 @@
 
 Pure javascript bindings for Anitomy, ported with emscripten. Runs on Node or the browser!
 
+## Demo
+You can test it [here](https://skiptirengu.github.io/anitomyscript/).
+
 ## Installation
 Anitomyscript is pure javascript and doesn't have any dependencies. Simply run
 ```bash
