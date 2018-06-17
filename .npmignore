@@ -1,2 +1,5 @@
 build.project
 .travis.yml
+anitomy
+.vscode
+.gitmodules
