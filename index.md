@@ -1,7 +1,7 @@
 # anitomyscript
 [![Build Status](https://travis-ci.org/skiptirengu/anitomyscript.svg?branch=master)](https://travis-ci.org/skiptirengu/anitomyscript)
 
-Pure javascript bindings for Anitomy, ported with emscripten. Runs on Node or the browser!
+Pure javascript bindings for [Anitomy](https://github.com/erengy/anitomy), ported with emscripten. Runs on Node or the browser!
 
 ## Demo
 {% include demo.html %}
