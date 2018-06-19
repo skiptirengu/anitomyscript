@@ -31,9 +31,9 @@ vector<Elements> *elementVectorFromIntPointer(uintptr_t vec)
     return reinterpret_cast<vector<Elements> *>(vec);
 }
 
-Options createOptions()
+Options *createOptions()
 {
-    return Options();
+    return new Options();
 }
 
 vector<Elements> parseArray(vector<string_t> vec, Options *options)
@@ -44,7 +44,7 @@ vector<Elements> parseArray(vector<string_t> vec, Options *options)
     for (string_t filename : vec)
     {
         an->Parse(filename);
-        ret.emplace_back(an->elements());
+        ret.push_back(an->elements());
     }
     free(options);
     delete an;
@@ -66,7 +66,7 @@ EMSCRIPTEN_BINDINGS(Anitomy)
 {
     emscripten::function("_parseArray", &parseArray, allow_raw_pointers());
     emscripten::function("_parseFile", &parseFile, allow_raw_pointers());
-    emscripten::function("_createOptions", &createOptions);
+    emscripten::function("_createOptions", &createOptions, allow_raw_pointers());
 
     register_vector<string_t>("VectorString_t")
         .constructor(&string_tVectorFromIntPointer, allow_raw_pointers());

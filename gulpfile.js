@@ -72,11 +72,14 @@ function generate(cb) {
     '--bind',
     '--closure', '1',
     '--llvm-lto', '3',
-    '--memory-init-file', '0',
+    '--memory-init-file', '1',
     '-s', 'EXPORT_NAME="anitomyscript"',
     '-s', 'NO_FILESYSTEM=1',
-    '-s', 'WASM=0',
+    '-s', 'WASM=1',
     '-s', 'MODULARIZE=1',
+    '-s', 'SINGLE_FILE=1',
+    '-s', 'BINARYEN_ASYNC_COMPILATION=0',
+    '-s', 'ALLOW_MEMORY_GROWTH=1',
     '-o', out,
     'anitomyscript.bc'
   ]
@@ -117,8 +120,8 @@ function clearBuild(cb) {
 
 function browser() {
   return browserify('./index.js', {
-      standalone: 'anitomyscript'
-    })
+    standalone: 'anitomyscript'
+  })
     .transform('babelify', {
       presets: ['babel-preset-env'],
       only: "index.js"
@@ -129,8 +132,8 @@ function browser() {
 
 function browserMin() {
   return browserify('./index.js', {
-      standalone: 'anitomyscript'
-    })
+    standalone: 'anitomyscript'
+  })
     .transform('uglifyify', {
       global: true
     })
