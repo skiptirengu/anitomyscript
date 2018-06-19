@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha test/*.spec.js",
-    "build": "gulp",
+    "build": "gulp build",
     "rebuild": "gulp rebuild"
   },
   "repository": {
