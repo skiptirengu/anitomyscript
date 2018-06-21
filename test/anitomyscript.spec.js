@@ -11,7 +11,6 @@ describe('anitomyscript', function () {
   describe('AnitomyNative', function () {
     it('Anitomy.setOptions', function () {
       const anitomy_native = new anitomyscript.AnitomyNative();
-      const defaultOptions = anitomy_native._createOptions();
       const anitomy = new anitomy_native.Anitomy();
       const newOpts = anitomy_native._createOptions();
       const ignored = new anitomy_native.VectorString_t();
