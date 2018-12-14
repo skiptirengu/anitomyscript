@@ -111,5 +111,14 @@ describe('anitomyscript', function () {
       expect(() => anitomyscript.parse(0)).to.throw('value should be a non empty string');
       expect(() => anitomyscript.parse(undefined)).to.throw('value should be a non empty string');
     });
+    it('parse - should not exhaust heap size', function () {
+      this.timeout(20000);
+      let maxIterations = 600;
+      let currIteration = 1;
+      for (; currIteration < maxIterations; currIteration++) {
+        expect(anitomyscript.parse(fixtureKeys)).to.have.lengthOf(fixtureKeys.length);
+        logger.log(`Iteration ${currIteration}`);
+      }
+    });
   });
 });
