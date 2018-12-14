@@ -13,7 +13,7 @@ function elementEntry(elements, key) {
 }
 
 function createObjectFromElements(elements) {
-  return {
+  const ret = {
     anime_season: elementEntry(elements, anitomy_native.ElementCategory.kElementAnimeSeason),
     season_prefix: elementEntry(elements, anitomy_native.ElementCategory.kElementAnimeSeasonPrefix),
     anime_title: elementEntry(elements, anitomy_native.ElementCategory.kElementAnimeTitle),
@@ -40,6 +40,8 @@ function createObjectFromElements(elements) {
     volume_prefix: elementEntry(elements, anitomy_native.ElementCategory.kElementVolumePrefix),
     unknown: elementEntry(elements, anitomy_native.ElementCategory.kElementUnknown),
   };
+  elements.delete();
+  return ret;
 }
 
 function mapVector(vector, cb) {
@@ -49,6 +51,7 @@ function mapVector(vector, cb) {
       cb(vector.get(i))
     );
   }
+  vector.delete();
   return array;
 }
 
@@ -106,8 +109,10 @@ function parse(file, options) {
   options = newAnitomyOptions(options || {});
 
   if (Array.isArray(file)) {
-    parsed = anitomy_native._parseArray(newStringVector(file, true), options);
+    let vector = newStringVector(file, true);
+    parsed = anitomy_native._parseArray(vector, options);
     parsed = newArrayFromElementVector(parsed);
+    vector.delete();
   } else {
     validateInput(file);
     parsed = anitomy_native._parseFile(file, options);
