@@ -122,7 +122,7 @@ function browser() {
       only: ['index.js']
     })
     .bundle()
-    .pipe(fs.createWriteStream('./dist/bundle.js'));
+    .pipe(fs.createWriteStream('./dist/anitomyscript.bundle.js'));
 }
 
 function browserMin() {
@@ -135,7 +135,7 @@ function browserMin() {
       global: true
     })
     .bundle()
-    .pipe(fs.createWriteStream('./dist/bundle.min.js'));
+    .pipe(fs.createWriteStream('./dist/anitomyscript.bundle.min.js'));
 }
 
 gulp.task('browser', browser);
