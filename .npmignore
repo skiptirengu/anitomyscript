@@ -1,5 +1,7 @@
 build.project
+output
 .travis.yml
 anitomy
 .vscode
 .gitmodules
+output

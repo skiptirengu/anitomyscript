@@ -17,7 +17,7 @@ function configure(cb) {
 
   const s = spawn(
     path.join(emscriptenPath, 'emconfigure'), ['cmake', path.resolve('.')], {
-      cwd: path.resolve('./', 'build.project')
+      cwd: path.resolve('./', 'output')
     }
   );
 
@@ -42,7 +42,7 @@ function make(cb) {
 
   const s = spawn(
     path.join(emscriptenPath, 'emmake'), ['make'], {
-      cwd: path.resolve('.', 'build.project')
+      cwd: path.resolve('.', 'output')
     }
   );
 
@@ -65,8 +65,8 @@ function generate(cb) {
     return cb('EMSCRIPTEN env var is invalid');
   }
 
-  const dir = path.resolve('.', 'build.project');
-  const out = path.resolve('./', 'build', 'anitomy-build.js');
+  const dir = path.resolve('.', 'output');
+  const out = path.resolve('./', 'build', 'anitomyscript.js');
   const spawnArgs = [
     '-O3',
     '--bind',
@@ -107,7 +107,7 @@ function clearJS(cb) {
 }
 
 function clearBuild(cb) {
-  const buildPath = path.resolve('./build.project');
+  const buildPath = path.resolve('./output');
   fs.readdirSync(buildPath).forEach((file) => {
     const fileWithPath = path.resolve(buildPath, file);
     if (file !== '.gitignore') fse.removeSync(fileWithPath);
@@ -116,27 +116,23 @@ function clearBuild(cb) {
 }
 
 function browser() {
-  return browserify('./index.js', {
-      standalone: 'anitomyscript'
-    })
+  return browserify('./index.js', { standalone: 'anitomyscript' })
     .transform('babelify', {
-      presets: ['babel-preset-env'],
-      only: "index.js"
+      presets: ['@babel/preset-env'],
+      only: ['index.js']
     })
     .bundle()
     .pipe(fs.createWriteStream('./dist/bundle.js'));
 }
 
 function browserMin() {
-  return browserify('./index.js', {
-      standalone: 'anitomyscript'
+  return browserify('./index.js', { standalone: 'anitomyscript' })
+    .transform('babelify', {
+      presets: ['@babel/preset-env'],
+      only: ['index.js']
     })
     .transform('uglifyify', {
       global: true
-    })
-    .transform('babelify', {
-      presets: ['babel-preset-env'],
-      only: 'index.js'
     })
     .bundle()
     .pipe(fs.createWriteStream('./dist/bundle.min.js'));

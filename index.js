@@ -1,6 +1,6 @@
 'use strict';
 
-const AnitomyNative = require('./build/anitomy-build');
+const AnitomyNative = require('./build/anitomyscript');
 const anitomy_native = new AnitomyNative();
 
 function elementEntry(elements, key) {
