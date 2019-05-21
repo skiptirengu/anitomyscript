@@ -22,7 +22,7 @@ await anitomy(file);
 
 Browser
 ```html
-<script src="dist/bundle.min.js"></script>
+<script src="dist/anitomyscript.bundle.min.js"></script>
 <script>
   window.anitomyscript(file).then((res) => console.log(res));
 </script>
