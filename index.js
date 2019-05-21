@@ -9,14 +9,14 @@ module.exports = function (file) {
   }
 
   if (anitomyModule) {
-    return Promise.resolve(parse(file));
+    return parse(file);
   }
 
   return new Promise((resolve, reject) => {
     try {
       AnitomyNative().then((actualModule) => {
         anitomyModule = actualModule;
-        resolve(parse(file));
+        parse(file).then(resolve).catch(reject);
       });
     } catch (err) {
       reject(err);
@@ -24,13 +24,14 @@ module.exports = function (file) {
   });
 }
 
-function parse(file) {
+async function parse(file) {
   if (Array.isArray(file)) {
     const vector = mapArray(file);
     const result = mapVector(anitomyModule.parseMultiple(vector));
     vector.delete();
     return result.map((each) => elements(each));
-  } else {
+  }
+  else {
     return elements(anitomyModule.parseSingle(file));
   }
 }
@@ -79,7 +80,7 @@ function mapArray(array) {
   const vector = new anitomyModule.StringVector();
   array.forEach((element, index) => {
     if (typeof element !== 'string') {
-      throw new Error(`Element at index ${ïndex} is not a string`);
+      throw new Error(`Element at index ${index} is not a string`);
     }
     vector.push_back(element)
   });

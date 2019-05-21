@@ -84,13 +84,22 @@ describe('anitomyscript', function () {
     });
   });
 
-  // it('parse - invalid values', async function () {
-  //   const errorMessage = 'Input must be either an Array or a string';
-  //   expect(() => anitomyscript.parse(null)).to.throw(errorMessage);
-  //   expect(() => anitomyscript.parse('')).to.throw(errorMessage);
-  //   expect(() => anitomyscript.parse(0)).to.throw(errorMessage);
-  //   expect(() => anitomyscript.parse(undefined)).to.throw(errorMessage);
-  // });
+  it('parse - invalid values (single)', async function () {
+    const errorMessage = 'Input must be either an Array or a string';
+    await Promise.all([
+      anitomyscript(null).catch((err) => expect(err.message).to.be.eq(errorMessage)),
+      anitomyscript(0).catch((err) => expect(err.message).to.be.eq(errorMessage)),
+      anitomyscript(undefined).catch((err) => expect(err.message).to.be.eq(errorMessage)),
+    ]);
+  });
+
+  it('parse - invalid array input', async function () {
+    try {
+      await anitomyscript(['Hello', 'World', null]);
+    } catch (err) {
+      expect(err.message).to.be.deep.eq('Element at index 2 is not a string');
+    }
+  });
 
   it('parse - should not exceed heap size', async function () {
     this.timeout(40000);

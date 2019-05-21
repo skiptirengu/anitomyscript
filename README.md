@@ -3,6 +3,8 @@
 
 Pure javascript bindings for [Anitomy](https://github.com/erengy/anitomy), ported with emscripten. Runs on Node or the browser!
 
+Checkout the [native node bindings](https://github.com/skiptirengu/anitomy-js) for anitomy too!
+
 ## Demo
 You can test it [here](https://skiptirengu.github.io/anitomyscript/).
 
