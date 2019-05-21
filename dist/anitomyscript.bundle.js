@@ -96,6 +96,10 @@ if (typeof exports === 'object' && typeof module === 'object')
 },{"_process":5,"fs":3,"path":4}],2:[function(require,module,exports){
 'use strict';
 
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 var AnitomyNative = require('./build/anitomyscript');
 
 var anitomyModule = undefined;
@@ -106,14 +110,14 @@ module.exports = function (file) {
   }
 
   if (anitomyModule) {
-    return Promise.resolve(parse(file));
+    return parse(file);
   }
 
   return new Promise(function (resolve, reject) {
     try {
       AnitomyNative().then(function (actualModule) {
         anitomyModule = actualModule;
-        resolve(parse(file));
+        parse(file).then(resolve)["catch"](reject);
       });
     } catch (err) {
       reject(err);
@@ -121,17 +125,42 @@ module.exports = function (file) {
   });
 };
 
-function parse(file) {
-  if (Array.isArray(file)) {
-    var vector = mapArray(file);
-    var result = mapVector(anitomyModule.parseMultiple(vector));
-    vector["delete"]();
-    return result.map(function (each) {
-      return elements(each);
-    });
-  } else {
-    return elements(anitomyModule.parseSingle(file));
-  }
+function parse(_x) {
+  return _parse.apply(this, arguments);
+}
+
+function _parse() {
+  _parse = _asyncToGenerator(
+  /*#__PURE__*/
+  regeneratorRuntime.mark(function _callee(file) {
+    var vector, result;
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            if (!Array.isArray(file)) {
+              _context.next = 7;
+              break;
+            }
+
+            vector = mapArray(file);
+            result = mapVector(anitomyModule.parseMultiple(vector));
+            vector["delete"]();
+            return _context.abrupt("return", result.map(function (each) {
+              return elements(each);
+            }));
+
+          case 7:
+            return _context.abrupt("return", elements(anitomyModule.parseSingle(file)));
+
+          case 8:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee);
+  }));
+  return _parse.apply(this, arguments);
 }
 
 function elements(elements) {
@@ -178,7 +207,7 @@ function mapArray(array) {
   var vector = new anitomyModule.StringVector();
   array.forEach(function (element, index) {
     if (typeof element !== 'string') {
-      throw new Error("Element at index ".concat(ïndex, " is not a string"));
+      throw new Error("Element at index ".concat(index, " is not a string"));
     }
 
     vector.push_back(element);
