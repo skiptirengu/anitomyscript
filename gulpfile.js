@@ -19,13 +19,16 @@ function build(cb) {
 
   let spawnArgs = [
     '--memory-init-file', '0',
-    '-std=c++14',
+    '-std=c++14', 
+    '-fPIC', '-fno-exceptions', '-Wall', '-Wextra', '-Wpedantic', '-Werror',
     '--bind',
     '-v',
     '-I', path.resolve('./include'),
     '-s', 'EXPORT_NAME="anitomyscript"',
     '-s', 'WASM=1',
+    '-s', 'FILESYSTEM=0',
     '-s', 'MODULARIZE=1',
+    '-s', 'ERROR_ON_UNDEFINED_SYMBOLS=0', // Filesystem disabled causes error: undefined symbol $FS
     path.resolve('./include/anitomy/anitomy.cpp'),
     path.resolve('./include/anitomy/element.cpp'),
     path.resolve('./include/anitomy/keyword.cpp'),
@@ -35,21 +38,22 @@ function build(cb) {
     path.resolve('./include/anitomy/string.cpp'),
     path.resolve('./include/anitomy/token.cpp'),
     path.resolve('./include/anitomy/tokenizer.cpp'),
-    path.resolve('./src/anitomy_script.cpp'),
+    path.resolve('./src/anitomyscript.cpp'),
     '-o', out,
   ];
 
   if (isRelease) {
     spawnArgs = spawnArgs.concat([
       '-O3',
-      '--closure', '1',
+      // TODO enable closure compiler once Filesystem bug is fixed '--closure', '1',
       '--llvm-lto', '3',
     ])
   }
 
   console.log(`Starting ${isRelease ? 'release' : 'debug'} build with emcc args`, spawnArgs);
 
-  const s = spawn(path.join(emscriptenPath, 'emcc.bat'), spawnArgs, {
+  const emccExec = process.platform === 'win32' ? 'emcc.bat' : 'emcc';
+  const s = spawn(path.join(emscriptenPath, emccExec), spawnArgs, {
     cwd: './build',
   });
 
