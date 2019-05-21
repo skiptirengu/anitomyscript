@@ -1,6 +1,6 @@
 'use strict';
 
-let AnitomyNative = require('./output/compiled');
+let AnitomyNative = require('./build/anitomyscript');
 let anitomyModule = undefined;
 
 module.exports = function (file) {
