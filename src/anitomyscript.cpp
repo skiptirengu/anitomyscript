@@ -1,89 +1,50 @@
 #include <emscripten/bind.h>
 #include <vector>
-#include "../anitomy/anitomy/anitomy.h"
+#include <anitomy/anitomy.h>
 
 using namespace emscripten;
 using namespace anitomy;
 using namespace std;
 
-class AnitomyCompat : public Anitomy
+Elements ParseSingle(string_t filename)
 {
-  public:
-    void setOptions(Options *newOptions)
-    {
-        Options &opts = options();
-        opts.allowed_delimiters = newOptions->allowed_delimiters;
-        opts.ignored_strings = newOptions->ignored_strings;
-        opts.parse_episode_number = newOptions->parse_episode_number;
-        opts.parse_episode_title = newOptions->parse_episode_title;
-        opts.parse_file_extension = newOptions->parse_file_extension;
-        opts.parse_release_group = newOptions->parse_release_group;
-    }
-};
+    Anitomy an;
+    an.Parse(filename);
+    return an.elements();
+}
 
-vector<string_t> *string_tVectorFromIntPointer(uintptr_t vec)
+vector<Elements> ParseMultiple(vector<string_t> filenames)
+{
+    Anitomy an;
+    vector<Elements> elements;
+    for (auto filename : filenames)
+    {
+        an.Parse(filename);
+        elements.emplace_back(an.elements());
+    }
+    return elements;
+}
+
+vector<string_t> *StringVectorFromPointer(uintptr_t vec)
 {
     return reinterpret_cast<vector<string_t> *>(vec);
 }
 
-vector<Elements> *elementVectorFromIntPointer(uintptr_t vec)
+vector<Elements> *ElementVectorFromPointer(uintptr_t vec)
 {
     return reinterpret_cast<vector<Elements> *>(vec);
 }
 
-Options *createOptions()
-{
-    return new Options();
-}
-
-vector<Elements> parseArray(vector<string_t> vec, Options *options)
-{
-    vector<Elements> ret;
-    AnitomyCompat *an = new AnitomyCompat();
-    an->setOptions(options);
-    for (string_t filename : vec)
-    {
-        an->Parse(filename);
-        ret.push_back(an->elements());
-    }
-    free(options);
-    delete an;
-    return ret;
-}
-
-Elements parseFile(string_t filename, Options *options)
-{
-    AnitomyCompat *an = new AnitomyCompat();
-    an->setOptions(options);
-    an->Parse(filename);
-    free(options);
-    Elements el = an->elements();
-    delete an;
-    return el;
-}
-
 EMSCRIPTEN_BINDINGS(Anitomy)
 {
-    emscripten::function("_parseArray", &parseArray, allow_raw_pointers());
-    emscripten::function("_parseFile", &parseFile, allow_raw_pointers());
-    emscripten::function("_createOptions", &createOptions, allow_raw_pointers());
+    emscripten::function("parseSingle", &ParseSingle);
+    emscripten::function("parseMultiple", &ParseMultiple);
 
-    register_vector<string_t>("VectorString_t")
-        .constructor(&string_tVectorFromIntPointer, allow_raw_pointers());
+    register_vector<string_t>("StringVector")
+        .constructor(&StringVectorFromPointer, allow_raw_pointers());
 
-    register_vector<Elements>("VectorElements")
-        .constructor(&elementVectorFromIntPointer, allow_raw_pointers());
-
-    class_<Anitomy>("AnitomyRaw")
-        .constructor<>()
-        .function("parse", &Anitomy::Parse)
-        .function("elements", &Anitomy::elements)
-        .function("options", &Anitomy::options)
-        .function("tokens", &Anitomy::tokens);
-
-    class_<AnitomyCompat, base<Anitomy>>("Anitomy")
-        .constructor<>()
-        .function("setOptions", &AnitomyCompat::setOptions, allow_raw_pointers());
+    register_vector<Elements>("ElementVector")
+        .constructor(&ElementVectorFromPointer, allow_raw_pointers());
 
     class_<Elements>("Elements")
         .constructor<>()
@@ -93,14 +54,6 @@ EMSCRIPTEN_BINDINGS(Anitomy)
         .function("get", &Elements::get)
         .function("count", &Elements::count)
         .function("get_all", &Elements::get_all);
-
-    class_<Options>("Options")
-        .property("allowed_delimiters", &Options::allowed_delimiters)
-        .property("ignored_strings", &Options::ignored_strings)
-        .property("parse_episode_number", &Options::parse_episode_number)
-        .property("parse_episode_title", &Options::parse_episode_title)
-        .property("parse_file_extension", &Options::parse_file_extension)
-        .property("parse_release_group", &Options::parse_release_group);
 
     enum_<ElementCategory>("ElementCategory")
         .value("kElementIterateFirst", ElementCategory::kElementIterateFirst)

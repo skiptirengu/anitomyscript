@@ -11,5 +11,5 @@ before_install:
   - docker run -dit --name emscripten -v $(pwd):/src trzeci/emscripten:sdk-incoming-64bit bash
 
 script:
-  - docker exec -it emscripten npm run rebuild
+  - docker exec -it emscripten npm run build
   - npm test

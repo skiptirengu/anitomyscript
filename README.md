@@ -3,6 +3,8 @@
 
 Pure javascript bindings for [Anitomy](https://github.com/erengy/anitomy), ported with emscripten. Runs on Node or the browser!
 
+Checkout the [native node bindings](https://github.com/skiptirengu/anitomy-js) for anitomy too!
+
 ## Demo
 You can test it [here](https://skiptirengu.github.io/anitomyscript/).
 
@@ -16,26 +18,26 @@ and you're good to go!
 ## Usage
 Node
 ```js
-var anitomy = require('anitomyscript');
-anitomy.parse(file);
+const anitomy = require('anitomyscript');
+await anitomy(file);
 ```
 
 Browser
 ```html
-<script src="dist/bundle.min.js"></script>
+<script src="dist/anitomyscript.bundle.min.js"></script>
 <script>
-  window.anitomyscript.parse(file);
+  window.anitomyscript(file).then((res) => console.log(res));
 </script>
 ```
 
 ## API
 
-### parse(file, [options])
+### parse(file) -> Promise<Array|Object>
 Parses a file or an array of files.
 
 ```js
 console.log(
-  anitomy.parse("[tlacatlc6] Natsume Yuujinchou Shi Vol. 1v2 & Vol. 2 (BD 1280x720 x264 AAC)")
+  await anitomy("[tlacatlc6] Natsume Yuujinchou Shi Vol. 1v2 & Vol. 2 (BD 1280x720 x264 AAC)")
 );
 /*
 {
@@ -55,30 +57,5 @@ console.log(
 */
 ```
 
-### AnitomyNative
-If you need more control over anitomy's behavior, anitomyscript exposes an
-object with native anitomy symbols. For more exemples check out the [tests](https://github.com/skiptirengu/anitomyscript/blob/master/test/anitomyscript.spec.js).
-
-```js
-const native = new anitomyscript.AnitomyNative();
-const elements = new native.Anitomy().parse(file, options);
-console.log(elements.size());
-```
-
-#### AnitomyNative.Anitomy
-Anitomy instance with some native methods like parse(), elements(), options() and tokens()
-
-#### AnitomyNative.Elements
-Parsed elements
-
-#### AnitomyNative.Options
-Anitomy's parse options
-
-#### AnitomyNative.ElementCategory
-Anitomy's parsed elements categories
-
-#### AnitomyNative.VectorString_t
-Vector of strings
-
-#### AnitomyNative.VectorElements
-Vector of elements
+## License
+Licensed under [BSD-2-Clause](./LICENSE)

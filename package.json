@@ -1,12 +1,12 @@
 {
   "name": "anitomyscript",
-  "version": "1.0.2",
+  "version": "2.0.0",
   "description": "Pure JavaScript bindings for Anitomy, ported with emscripten",
   "main": "index.js",
   "scripts": {
     "test": "mocha test/*.spec.js",
-    "build": "gulp build",
-    "rebuild": "gulp rebuild"
+    "build": "cross-env NODE_ENV=prod gulp",
+    "build:dev": "cross-env NODE_ENV=dev gulp"
   },
   "repository": {
     "type": "git",
@@ -25,15 +25,18 @@
   },
   "homepage": "https://github.com/skiptirengu/anitomyscript#readme",
   "devDependencies": {
-    "babel-core": "^6.26.3",
-    "babel-preset-env": "^1.7.0",
-    "babelify": "^8.0.0",
+    "@babel/core": "^7.4.4",
+    "@babel/preset-env": "^7.4.4",
+    "babelify": "^10.0.0",
     "browserify": "^16.2.3",
-    "chai": "^4.1.2",
-    "fs-extra": "^6.0.1",
-    "gulp": "^4.0.0",
-    "mocha": "^5.2.0",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "cross-env": "^5.2.0",
+    "fs-extra": "^8.0.1",
+    "gulp": "^4.0.2",
+    "mocha": "^6.1.4",
     "mocha-logger": "^1.0.6",
-    "uglifyify": "^5.0.0"
-  }
+    "tinyify": "^2.5.0"
+  },
+  "dependencies": {}
 }
