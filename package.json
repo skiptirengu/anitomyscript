@@ -35,7 +35,7 @@
     "gulp": "^4.0.2",
     "mocha": "^6.1.4",
     "mocha-logger": "^1.0.6",
-    "uglifyify": "^5.0.1"
+    "tinyify": "^2.5.0"
   },
   "dependencies": {}
 }

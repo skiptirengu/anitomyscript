@@ -28,7 +28,6 @@ function build(cb) {
     '-s', 'WASM=1',
     '-s', 'FILESYSTEM=0',
     '-s', 'MODULARIZE=1',
-    '-s', 'ERROR_ON_UNDEFINED_SYMBOLS=0', // Filesystem disabled causes error: undefined symbol $FS
     path.resolve('./include/anitomy/anitomy.cpp'),
     path.resolve('./include/anitomy/element.cpp'),
     path.resolve('./include/anitomy/keyword.cpp'),
@@ -45,7 +44,7 @@ function build(cb) {
   if (isRelease) {
     spawnArgs = spawnArgs.concat([
       '-O3',
-      // TODO enable closure compiler once Filesystem bug is fixed '--closure', '1',
+      '--closure', '1',
       '--llvm-lto', '3',
     ])
   }
@@ -94,12 +93,10 @@ function browser() {
 
 function browserMin() {
   return browserify('./index.js', { standalone: 'anitomyscript' })
+    .plugin('tinyify')
     .transform('babelify', {
       presets: ['@babel/preset-env'],
       only: ['index.js']
-    })
-    .transform('uglifyify', {
-      global: true
     })
     .bundle()
     .pipe(fs.createWriteStream('./dist/anitomyscript.bundle.min.js'));
