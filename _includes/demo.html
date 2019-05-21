@@ -1,4 +1,4 @@
-<script src="https://unpkg.com/anitomyscript@latest/dist/bundle.min.js" async></script>
+<script src="https://unpkg.com/anitomyscript@latest/dist/anitomyscript.bundle.min.js" async></script>
 <input type="text" id="demo-input" name="demo-input" style="width: 91%">
 <button id="demo-parse">Parse!</button>
 <pre id="demo-preview">
@@ -15,12 +15,11 @@
       }
     };
     button.onclick = function () {
-      try {
-        var parsed = window.anitomyscript.parse(input.value);
+      window.anitomyscript(input.value).then(function (parsed) {
         preview.innerText = JSON.stringify(parsed, null, 2);
-      } catch (err) {
+      }).catch(function (err) {
         preview.innerText = err.message;
-      }
+      });
     };
   })();
 </script>
