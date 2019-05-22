@@ -19,7 +19,7 @@ function build(cb) {
 
   let spawnArgs = [
     '--memory-init-file', '0',
-    '-std=c++14', 
+    '-std=c++14',
     '-fPIC', '-fno-exceptions', '-Wall', '-Wextra', '-Wpedantic', '-Werror',
     '--bind',
     '-v',
@@ -81,23 +81,27 @@ function clearBuild(cb) {
   cb();
 }
 
+function _babel() {
+  return {
+    presets: ['@babel/preset-env'],
+    plugins: [
+      ['@babel/plugin-transform-runtime', { helpers: false }]
+    ],
+    only: ['index.js'],
+  };
+}
+
 function browser() {
   return browserify('./index.js', { standalone: 'anitomyscript' })
-    .transform('babelify', {
-      presets: ['@babel/preset-env'],
-      only: ['index.js']
-    })
+    .transform('babelify', _babel())
     .bundle()
     .pipe(fs.createWriteStream('./dist/anitomyscript.bundle.js'));
 }
 
 function browserMin() {
   return browserify('./index.js', { standalone: 'anitomyscript' })
+    .transform('babelify', _babel())
     .plugin('tinyify')
-    .transform('babelify', {
-      presets: ['@babel/preset-env'],
-      only: ['index.js']
-    })
     .bundle()
     .pipe(fs.createWriteStream('./dist/anitomyscript.bundle.min.js'));
 }
