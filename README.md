@@ -3,6 +3,8 @@
 
 Pure javascript bindings for [Anitomy](https://github.com/erengy/anitomy), ported with emscripten. Runs on Node or the browser!
 
+1.x versions uses asm.js. You should consider using versions >= 2 which are compiled to WASM!
+
 ## Demo
 You can test it [here](https://skiptirengu.github.io/anitomyscript/).
 
