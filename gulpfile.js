@@ -72,7 +72,7 @@ function clearBuild(cb) {
   const buildPath = path.resolve('./build');
   fs.readdirSync(buildPath).forEach((file) => {
     const fileWithPath = path.resolve(buildPath, file);
-    if (file !== '.gitkeep') fse.removeSync(fileWithPath);
+    if (file !== '.gitignore') fse.removeSync(fileWithPath);
   });
   cb();
 }
