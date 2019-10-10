@@ -8,10 +8,11 @@ const fse = require('fs-extra');
 const browserify = require('browserify');
 
 function build(cb) {
-  const emscriptenPath = process.env.EMSCRIPTEN;
+  const emscriptenPath = process.env.EMSCRIPTEN || process.env.EMSCRIPTEN_ROOT;
+  console.log(process.env)
 
-  if (!fs.existsSync(path.resolve(emscriptenPath))) {
-    return cb('EMSCRIPTEN env var is invalid');
+  if (!emscriptenPath || !fs.existsSync(path.resolve(emscriptenPath))) {
+    return cb('Unable to find emscripten root. Use the env variable EMSCRIPTEN or EMSCRIPTEN_ROOT to set it manually.');
   }
 
   const out = path.resolve('./', 'build', 'anitomyscript.js');
@@ -65,7 +66,7 @@ function build(cb) {
   });
 
   s.on('error', (e) => cb(e))
-  s.on('close', (c) => cb());
+  s.on('close', () => cb());
 }
 
 function copyWasm() {

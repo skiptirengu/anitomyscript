@@ -1,3 +1,7 @@
+# Lock file
+yarn.lock
+package-lock.json
+
 # IDE
 .vscode
 

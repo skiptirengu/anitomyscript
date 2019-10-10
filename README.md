@@ -57,5 +57,12 @@ console.log(
 */
 ```
 
+## Building
+
+* Install dependencies `yarn install`
+* Install [emscripten](https://emscripten.org/docs/getting_started/downloads.html)
+* Make sure either `EMSCRIPTEN` or `EMSCRIPTEN_ROOT` env variables are set with the emsdk root path
+* Run `yarn build`
+
 ## License
 Licensed under [BSD-2-Clause](./LICENSE)
