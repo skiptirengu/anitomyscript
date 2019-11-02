@@ -8,11 +8,12 @@ services:
   - docker
 
 before_script:
+  - rm -rf dist/* && rm -rf build/*
   - npm install -g yarn
 
 before_install:
   - docker run -dit --name emscripten -v $(pwd):/src trzeci/emscripten:sdk-incoming-64bit bash
 
 script:
-  - docker exec -it emscripten yarn build
+  - docker exec -it emscripten npm run build
   - yarn test
