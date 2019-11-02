@@ -37,9 +37,9 @@
     "cross-env": "^6.0.3",
     "fs-extra": "^8.1.0",
     "gulp": "^4.0.2",
-    "mocha": "^6.2.1",
+    "mocha": "^6.2.2",
     "mocha-logger": "^1.0.6",
-    "tinyify": "^2.5.1"
+    "tinyify": "^2.5.2"
   },
   "dependencies": {}
 }
