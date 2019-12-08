@@ -1,6 +1,6 @@
 {
   "name": "anitomyscript",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "Pure JavaScript bindings for Anitomy, ported with emscripten",
   "main": "index.js",
   "scripts": {
