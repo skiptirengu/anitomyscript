@@ -8,8 +8,13 @@ const fse = require('fs-extra');
 const browserify = require('browserify');
 
 function build(cb) {
-  const emscriptenPath = process.env.EMSCRIPTEN || process.env.EMSCRIPTEN_ROOT;
-  console.log(process.env)
+  let emscriptenPath = process.env.EMSCRIPTEN || process.env.EMSCRIPTEN_ROOT;
+  console.log(process.env);
+
+  if (!emscriptenPath && process.env.EMSDK) {
+    console.log('Trying default EMSDK path');
+    emscriptenPath = path.join(process.env.EMSDK, 'upstream', 'emscripten');
+  }
 
   if (!emscriptenPath || !fs.existsSync(path.resolve(emscriptenPath))) {
     return cb('Unable to find emscripten root. Use the env variable EMSCRIPTEN or EMSCRIPTEN_ROOT to set it manually.');
