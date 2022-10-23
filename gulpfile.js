@@ -1,22 +1,17 @@
-'use strict';
+import gulp from 'gulp'
+import { spawn } from 'child_process'
+import path from 'path'
+import fs from 'fs'
 
-const gulp = require('gulp');
-const spawn = require('child_process').spawn;
-const path = require('path');
-const fs = require('fs');
-const fse = require('fs-extra');
-const browserify = require('browserify');
-
-function build(cb) {
-  const emscriptenPath = process.env.EMSCRIPTEN || process.env.EMSCRIPTEN_ROOT;
-  console.log(process.env)
+function build (cb) {
+  const emscriptenPath = process.env.EMSCRIPTEN || process.env.EMSCRIPTEN_ROOT
 
   if (!emscriptenPath || !fs.existsSync(path.resolve(emscriptenPath))) {
-    return cb('Unable to find emscripten root. Use the env variable EMSCRIPTEN or EMSCRIPTEN_ROOT to set it manually.');
+    return cb('Unable to find emscripten root. Use the env variable EMSCRIPTEN or EMSCRIPTEN_ROOT to set it manually.')
   }
 
-  const out = path.resolve('./', 'build', 'anitomyscript.js');
-  const isRelease = process.env.NODE_ENV === 'prod';
+  const out = path.resolve('./', 'dist', 'anitomyscript.js')
+  const isRelease = process.env.NODE_ENV === 'prod'
 
   let spawnArgs = [
     '--memory-init-file', '0',
@@ -29,6 +24,13 @@ function build(cb) {
     '-s', 'WASM=1',
     '-s', 'FILESYSTEM=0',
     '-s', 'MODULARIZE=1',
+    '-s', 'EXPORT_ES6=1',
+    '-s', 'AUTO_JS_LIBRARIES=0',
+    '-s', 'AUTO_NATIVE_LIBRARIES=0',
+    '-s', 'HTML5_SUPPORT_DEFERRING_USER_SENSITIVE_REQUESTS=0',
+    '-s', 'USE_SDL=0',
+    '-s', 'INITIAL_MEMORY=5308416',
+    '--no-heap-copy',
     path.resolve('./include/anitomy/anitomy.cpp'),
     path.resolve('./include/anitomy/element.cpp'),
     path.resolve('./include/anitomy/keyword.cpp'),
@@ -39,74 +41,36 @@ function build(cb) {
     path.resolve('./include/anitomy/token.cpp'),
     path.resolve('./include/anitomy/tokenizer.cpp'),
     path.resolve('./src/anitomyscript.cpp'),
-    '-o', out,
-  ];
+    '-o', out
+  ]
 
   if (isRelease) {
     spawnArgs = spawnArgs.concat([
       '-O3',
+      '-s', 'USE_CLOSURE_COMPILER=1',
+      '-s', 'IGNORE_CLOSURE_COMPILER_ERRORS=1',
       '--closure', '1',
-      '--llvm-lto', '3',
+      '--llvm-lto', '3'
     ])
   }
 
-  console.log(`Starting ${isRelease ? 'release' : 'debug'} build with emcc args`, spawnArgs);
+  console.log(`Starting ${isRelease ? 'release' : 'debug'} build with emcc args`, spawnArgs)
 
-  const emccExec = process.platform === 'win32' ? 'emcc.bat' : 'emcc';
+  const emccExec = process.platform === 'win32' ? 'emcc.bat' : 'emcc'
   const s = spawn(path.join(emscriptenPath, emccExec), spawnArgs, {
-    cwd: './build',
-  });
+    cwd: './dist'
+  })
 
   s.stdout.on('data', (data) => {
-    console.log(data.toString());
-  });
+    console.log(data.toString())
+  })
 
   s.stderr.on('data', (data) => {
-    console.log(data.toString());
-  });
+    console.log(data.toString())
+  })
 
   s.on('error', (e) => cb(e))
-  s.on('close', () => cb());
+  s.on('close', () => cb())
 }
 
-function copyWasm() {
-  return gulp.src('./build/anitomyscript.wasm').pipe(gulp.dest('./dist'));
-}
-
-function clearBuild(cb) {
-  const buildPath = path.resolve('./build');
-  fs.readdirSync(buildPath).forEach((file) => {
-    const fileWithPath = path.resolve(buildPath, file);
-    if (file !== '.gitkeep') fse.removeSync(fileWithPath);
-  });
-  cb();
-}
-
-function _babel() {
-  return {
-    presets: ['@babel/preset-env'],
-    plugins: [
-      ['@babel/plugin-transform-runtime', { helpers: false }]
-    ],
-    only: ['index.js'],
-  };
-}
-
-function browser() {
-  return browserify('./index.js', { standalone: 'anitomyscript' })
-    .transform('babelify', _babel())
-    .bundle()
-    .pipe(fs.createWriteStream('./dist/anitomyscript.bundle.js'));
-}
-
-function browserMin() {
-  return browserify('./index.js', { standalone: 'anitomyscript' })
-    .transform('babelify', _babel())
-    .plugin('tinyify')
-    .bundle()
-    .pipe(fs.createWriteStream('./dist/anitomyscript.bundle.min.js'));
-}
-
-gulp.task('build', build);
-gulp.task('browser', gulp.series(gulp.parallel(browser, browserMin), copyWasm));
-gulp.task('default', gulp.series(clearBuild, 'build', 'browser'));
+gulp.task('default', build)

@@ -1,13 +1,15 @@
 {
   "name": "anitomyscript",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "Pure JavaScript bindings for Anitomy, ported with emscripten",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "mocha test/*.spec.js",
     "build": "cross-env NODE_ENV=prod gulp",
     "build:dev": "cross-env NODE_ENV=dev gulp"
   },
+  "files": ["index.js", "dist/anitomyscript.js", "dist/anitomyscript.wasm"],
   "types": "index.d.ts",
   "repository": {
     "type": "git",
@@ -20,26 +22,25 @@
     "anime"
   ],
   "author": "Thiago Oliveira <thiago_ogt@outlook.com>",
+  "contributors": [
+    {
+      "name" : "ThaUnknown",
+      "email" : "casistaken@gmail.com",
+      "url" : "https://github.com/ThaUnknown/"
+    }
+  ],
   "license": "BSD-2-Clause",
   "bugs": {
     "url": "https://github.com/skiptirengu/anitomyscript/issues"
   },
   "homepage": "https://github.com/skiptirengu/anitomyscript#readme",
   "devDependencies": {
-    "@babel/core": "^7.6.4",
-    "@babel/plugin-transform-runtime": "^7.6.2",
-    "@babel/preset-env": "^7.6.3",
-    "@babel/runtime": "^7.6.3",
-    "babelify": "^10.0.0",
-    "browserify": "^16.5.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "cross-env": "^6.0.3",
-    "fs-extra": "^8.1.0",
     "gulp": "^4.0.2",
     "mocha": "^6.2.2",
     "mocha-logger": "^1.0.6",
     "tinyify": "^2.5.2"
-  },
-  "dependencies": {}
+  }
 }
