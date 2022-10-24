@@ -30,6 +30,7 @@ function build (cb) {
     '-s', 'HTML5_SUPPORT_DEFERRING_USER_SENSITIVE_REQUESTS=0',
     '-s', 'USE_SDL=0',
     '-s', 'INITIAL_MEMORY=5308416',
+    '-s', 'ALLOW_MEMORY_GROWTH=1',
     '--no-heap-copy',
     path.resolve('./include/anitomy/anitomy.cpp'),
     path.resolve('./include/anitomy/element.cpp'),
@@ -55,7 +56,6 @@ function build (cb) {
   }
 
   console.log(`Starting ${isRelease ? 'release' : 'debug'} build with emcc args`, spawnArgs)
-
   const emccExec = process.platform === 'win32' ? 'emcc.bat' : 'emcc'
   const s = spawn(path.join(emscriptenPath, emccExec), spawnArgs, {
     cwd: './dist'
