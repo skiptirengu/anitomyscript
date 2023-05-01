@@ -22,6 +22,7 @@ function build (cb) {
     '-I', path.resolve('./include'),
     '-s', 'EXPORT_NAME="anitomyscript"',
     '-s', 'WASM=1',
+    '-s', 'ENVIRONMENT=web,node',
     '-s', 'FILESYSTEM=0',
     '-s', 'MODULARIZE=1',
     '-s', 'EXPORT_ES6=1',
