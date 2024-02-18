@@ -1,42 +1,31 @@
-'use strict';
+import AnitomyNative from './dist/anitomyscript.js'
+let anitomyModule
 
-let AnitomyNative = require('./build/anitomyscript');
-let anitomyModule = undefined;
-
-module.exports = function (file) {
+export default async function (file) {
   if (!Array.isArray(file) && typeof file !== 'string') {
-    return Promise.reject(new Error('Input must be either an Array or a string'));
+    return new Error('Input must be either an Array or a string')
   }
 
   if (anitomyModule) {
-    return parse(file);
+    return parse(file)
   }
 
-  return new Promise((resolve, reject) => {
-    try {
-      AnitomyNative().then((actualModule) => {
-        anitomyModule = actualModule;
-        parse(file).then(resolve).catch(reject);
-      });
-    } catch (err) {
-      reject(err);
-    }
-  });
+  anitomyModule = await AnitomyNative()
+  return parse(file)
 }
 
-async function parse(file) {
+async function parse (file) {
   if (Array.isArray(file)) {
-    const vector = mapArray(file);
-    const result = mapVector(anitomyModule.parseMultiple(vector));
-    vector.delete();
-    return result.map((each) => elements(each));
-  }
-  else {
-    return elements(anitomyModule.parseSingle(file));
+    const vector = mapArray(file)
+    const result = mapVector(anitomyModule.parseMultiple(vector))
+    vector.delete()
+    return result.map((each) => elements(each))
+  } else {
+    return elements(anitomyModule.parseSingle(file))
   }
 }
 
-function elements(elements) {
+function elements (elements) {
   const returnObj = {
     anime_season: elementEntry(elements, anitomyModule.ElementCategory.kElementAnimeSeason),
     season_prefix: elementEntry(elements, anitomyModule.ElementCategory.kElementAnimeSeasonPrefix),
@@ -62,36 +51,36 @@ function elements(elements) {
     video_term: elementEntry(elements, anitomyModule.ElementCategory.kElementVideoTerm),
     volume_number: elementEntry(elements, anitomyModule.ElementCategory.kElementVolumeNumber),
     volume_prefix: elementEntry(elements, anitomyModule.ElementCategory.kElementVolumePrefix),
-    unknown: elementEntry(elements, anitomyModule.ElementCategory.kElementUnknown),
-  };
-  elements.delete();
-  return returnObj;
+    unknown: elementEntry(elements, anitomyModule.ElementCategory.kElementUnknown)
+  }
+  elements.delete()
+  return returnObj
 }
 
-function elementEntry(elements, key) {
+function elementEntry (elements, key) {
   if (elements.count(key) > 1) {
-    return mapVector(elements.get_all(key));
+    return mapVector(elements.get_all(key))
   } else {
-    return elements.get(key) || undefined;
+    return elements.get(key) || undefined
   }
 }
 
-function mapArray(array) {
-  const vector = new anitomyModule.StringVector();
+function mapArray (array) {
+  const vector = new anitomyModule.StringVector()
   array.forEach((element, index) => {
     if (typeof element !== 'string') {
-      throw new Error(`Element at index ${index} is not a string`);
+      throw new Error(`Element at index ${index} is not a string`)
     }
     vector.push_back(element)
-  });
-  return vector;
+  })
+  return vector
 }
 
-function mapVector(vector) {
-  const array = [];
+function mapVector (vector) {
+  const array = []
   for (let index = 0; index < vector.size(); index++) {
-    array.push(vector.get(index));
+    array.push(vector.get(index))
   }
-  vector.delete();
-  return array;
+  vector.delete()
+  return array
 }
